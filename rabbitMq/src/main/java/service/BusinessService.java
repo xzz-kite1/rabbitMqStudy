@@ -23,7 +23,11 @@ public class BusinessService {
 
     public void sendDelayMqMsg(MsgBody msgBody) {
         logger.info("发送sendDelayMqMsg消息 {} 时间{}", JSONObject.toJSONString(msgBody), System.currentTimeMillis());
-        amqpTemplate.convertAndSend("delayExchange", "delayQueue", JSONObject.toJSONString(msgBody));
+        amqpTemplate.convertAndSend("delayExchange", "delayQueue", JSONObject.toJSONString(msgBody),
+                message -> {
+                    message.getMessageProperties().setDelay(msgBody.getDelayTime());
+                    return message;
+                });
     }
 
 }
